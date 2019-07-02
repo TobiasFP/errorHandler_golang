@@ -13,18 +13,18 @@ func IsError(err error, errClass string, mgConf MailgunConf) bool {
 	if err != nil {
 		switch errClass {
 		case "fatal":
-			sendmail(mgConf, "PANIC!!!", "A panicy error occured: "+err.Error())
+			Sendmail(mgConf, "PANIC!!!", "A panicy error occured: "+err.Error())
 			log.Fatal("Panic: ", err, " - ", mgConf.receiver, " has been notified by mail")
 		case "panic":
-			sendmail(mgConf, "PANIC!!!", "A panicy error occured: "+err.Error())
+			Sendmail(mgConf, "PANIC!!!", "A panicy error occured: "+err.Error())
 			log.Panic("Panic: ", err, " - ", mgConf.receiver, " has been notified by mail")
 		case "log&mail":
-			sendmail(mgConf, "A simple error occured", "A simple error occured: "+err.Error()+" - "+mgConf.receiver)
+			Sendmail(mgConf, "A simple error occured", "A simple error occured: "+err.Error()+" - "+mgConf.receiver)
 			log.Print("A simple error occured: ", err, " - ", mgConf.receiver, " has been notified by mail")
 		case "log":
 			log.Print("A simple error occured: ", err)
 		default:
-			sendmail(mgConf, "Poorly set up logger", `Your logger was poorly set up.\n
+			Sendmail(mgConf, "Poorly set up logger", `Your logger was poorly set up.\n
 			Make sure to choose from the official list of error classes in all functions\n
 			See the github page for a list`)
 			log.Print(`Your logger was poorly set up.\n
@@ -44,7 +44,7 @@ type MailgunConf struct {
 	receiver      string
 }
 
-func sendmail(mgConf MailgunConf, subject string, body string) {
+func Sendmail(mgConf MailgunConf, subject string, body string) {
 	// Create an instance of the Mailgun Client
 	mg := mailgun.NewMailgun(mgConf.mailgunDomain, mgConf.privateAPIKey)
 
