@@ -14,13 +14,13 @@ func IsError(err error, errClass string, mgConf MailgunConf) bool {
 		switch errClass {
 		case "fatal":
 			Sendmail(mgConf, "PANIC!!!", "A panicy error occured: "+err.Error())
-			log.Fatal("Panic: ", err, " - ", mgConf.receiver, " has been notified by mail")
+			log.Fatal("Panic: ", err, " - ", mgConf.Receiver, " has been notified by mail")
 		case "panic":
 			Sendmail(mgConf, "PANIC!!!", "A panicy error occured: "+err.Error())
-			log.Panic("Panic: ", err, " - ", mgConf.receiver, " has been notified by mail")
+			log.Panic("Panic: ", err, " - ", mgConf.Receiver, " has been notified by mail")
 		case "log&mail":
-			Sendmail(mgConf, "A simple error occured", "A simple error occured: "+err.Error()+" - "+mgConf.receiver)
-			log.Print("A simple error occured: ", err, " - ", mgConf.receiver, " has been notified by mail")
+			Sendmail(mgConf, "A simple error occured", "A simple error occured: "+err.Error()+" - "+mgConf.Receiver)
+			log.Print("A simple error occured: ", err, " - ", mgConf.Receiver, " has been notified by mail")
 		case "log":
 			log.Print("A simple error occured: ", err)
 		default:
@@ -37,19 +37,21 @@ func IsError(err error, errClass string, mgConf MailgunConf) bool {
 	}
 }
 
+// LocalDescription is for you to set in order to describe what file or what server is actually sending the error log
 type MailgunConf struct {
-	mailgunDomain string
-	privateAPIKey string
-	sender        string
-	receiver      string
+	MailgunDomain    string
+	PrivateAPIKey    string
+	Sender           string
+	Receiver         string
+	LocalDescription string
 }
 
 func Sendmail(mgConf MailgunConf, subject string, body string) {
 	// Create an instance of the Mailgun Client
-	mg := mailgun.NewMailgun(mgConf.mailgunDomain, mgConf.privateAPIKey)
+	mg := mailgun.NewMailgun(mgConf.MailgunDomain, mgConf.PrivateAPIKey)
 
 	// The message object allows you to add attachments and Bcc recipients
-	message := mg.NewMessage(mgConf.sender, subject, body, mgConf.receiver)
+	message := mg.NewMessage(mgConf.Sender, subject, body, mgConf.Receiver)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
